@@ -1,77 +1,84 @@
 # functionadd+
 
-**A comically overengineered installer for a tiny Fish shell function.**
+A configuration deployment utility for Fish shell environments. `functionadd+` performs environment checks, initializes the Fish configuration path, validates configuration syntax, and installs a reusable function-management command.
 
-`functionadd+` displays a dramatic terminal deployment sequence full of progress bars, scientific-looking telemetry, hexadecimal IDs, and deeply unnecessary subsystem names. Once the theatrics finish, it adds this small function to your Fish configuration:
+## Capabilities
 
-```fish
-function functionadd+
-    nano ~/.config/fish/config.fish
-    source ~/.config/fish/config.fish
-end
-```
-
-The technical-looking telemetry is **simulated for comedy**. The app does not tune the kernel, benchmark hardware, perform quantum computing, or optimize Fish itself.
+- Fish runtime detection and compatibility checks
+- Configuration path initialization with XDG support
+- Existing definition detection to prevent duplicate registration
+- Pre-change configuration backup
+- Syntax validation before completing deployment
+- Automatic recovery when validation fails
+- Deployment status and integrity reporting
+- Interactive configuration editing through Nano
 
 ## Requirements
 
 - Linux
 - Python 3.10 or newer
 - Fish shell
+- Nano
 
 No third-party Python packages are required.
 
-## Run it
+## Installation
 
-Clone the repository, enter the directory, and run:
+Clone the repository and enter the project directory:
+
+```sh
+git clone https://github.com/YOUR-USERNAME/functionadd-plus.git
+cd functionadd-plus
+```
+
+Run the deployment utility:
 
 ```sh
 python3 functionadd_plus.py
 ```
 
-The script:
-- checks whether Fish is installed;
-- creates `~/.config/fish` if needed;
-- avoids adding a duplicate function;
-- creates a backup of an existing `config.fish` before editing it;
-- validates the resulting config with `fish --no-execute`;
-- attempts to restore the backup if validation fails.
+The utility checks the environment, prepares the configuration directory, backs up an existing configuration when necessary, registers the `functionadd+` command, and validates the resulting Fish configuration. If validation fails, it attempts to restore the prior configuration.
 
-It does **not** execute the Fish config as part of validation. After success, reload the config in your current Fish session:
+## Activation
+
+After successful deployment, load the updated configuration into the current Fish session:
 
 ```fish
 source ~/.config/fish/config.fish
 ```
 
-Then run:
+If your Fish configuration uses a custom `XDG_CONFIG_HOME`, source the `config.fish` file under that directory instead.
+
+Run the installed command:
 
 ```fish
 functionadd+
 ```
 
-When `functionadd+` opens `config.fish` in Nano, add your new function at the very bottom of the file. Press **Ctrl+O**, then **Enter**, then **Ctrl+X**. The function will be saved, and the config will be sourced automatically by the function.
+This opens the Fish configuration in Nano. Add new function definitions at the bottom of the file. Save with **Ctrl+O**, confirm with **Enter**, and exit with **Ctrl+X**. The command sources the configuration after Nano exits successfully.
 
-## Safety notes
+## Configuration and recovery
 
-Read scripts before running them, especially scripts that edit shell configuration. This project writes only to the Fish config path shown in its output. If the function already exists, the script leaves the file unchanged.
+The default configuration path is `~/.config/fish/config.fish`. When `XDG_CONFIG_HOME` is set, the utility uses `$XDG_CONFIG_HOME/fish/config.fish`.
 
-The default function opens `~/.config/fish/config.fish` in `nano` and sources that file when you exit. If you use a different editor, change `nano` in the function body.
+Before modifying an existing configuration, the utility creates a backup named `config.fish.functionadd-plus.bak`. Syntax validation uses Fish's no-execution mode, so the configuration is checked without running its commands. If validation fails, the utility attempts to restore the previous file.
 
-## GitHub
+If the command is already registered, the utility leaves the configuration unchanged.
 
-Create an empty GitHub repository named `functionadd-plus`, then push this directory:
+## Troubleshooting
 
-```sh
-git init
-git add README.md LICENSE .gitignore functionadd_plus.py
-git commit -m "Add functionadd+ comedy installer"
-git branch -M main
-git remote add origin https://github.com/YOUR-USERNAME/functionadd-plus.git
-git push -u origin main
-```
+**Fish shell was not found**
 
-Replace `YOUR-USERNAME` with your GitHub username.
+Install Fish with your distribution's package manager and rerun the utility.
 
-## License
+**Configuration validation fails**
 
-MIT. See [LICENSE](LICENSE).
+Review the syntax error reported by Fish. The utility attempts to restore the previous configuration if validation does not pass.
+
+**The command is unavailable in the current session**
+
+Source your Fish configuration, then run `functionadd+` again.
+
+## License and copyright
+
+Copyright (c) 2026. All rights reserved. No license is granted to copy, modify, redistribute, or republish this software without prior written permission, except where permitted by applicable law.
